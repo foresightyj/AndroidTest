@@ -24,6 +24,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private Button mIncrementCounterButton, mGetPostsButton;
     private TextView mCounterTextView, mPostsTextView;
@@ -40,19 +42,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        queue  = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this);
 
-        mIncrementCounterButton = (Button)findViewById(R.id.increment_counter_button);
-        mCounterTextView = (TextView)findViewById(R.id.counter_text_view);
+        mIncrementCounterButton = (Button) findViewById(R.id.increment_counter_button);
+        mCounterTextView = (TextView) findViewById(R.id.counter_text_view);
 
-        mGetPostsButton = (Button)findViewById(R.id.get_posts_button);
-        mPostsTextView = (TextView)findViewById(R.id.posts_text_view);
+        mGetPostsButton = (Button) findViewById(R.id.get_posts_button);
+        mPostsTextView = (TextView) findViewById(R.id.posts_text_view);
 
         Log.i(TAG, "MainActivity Created");
 
-        mIncrementCounterButton.setOnClickListener(new View.OnClickListener(){
+        mIncrementCounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Log.i(TAG, "Increment button is clicked");
                 Toast toast = Toast.makeText(MainActivity.this, R.string.increment_toast, Toast.LENGTH_SHORT);
                 counter++;
@@ -61,24 +63,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mGetPostsButton.setOnClickListener(new View.OnClickListener(){
+        mGetPostsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Get Posts Button is clicked");
-                JsonArrayRequest request = new JsonArrayRequest
-                        (Request.Method.GET, root + "/posts/", null, new Response.Listener<JSONArray>() {
+
+                RestfulRequest<ArrayList<PostModel>> req = new RestfulRequest<>(
+                        root + "/posts/",
+                        new Response.Listener<ArrayList<PostModel>>() {
                             @Override
-                            public void onResponse(JSONArray response) {
-                                Log.i(TAG, "# of posts is " + response.length());
-                                mPostsTextView.setText(response.toString());
+                            public void onResponse(ArrayList<PostModel> response) {
+                                Log.i(TAG, "# of posts is " + response.size());
+                                mPostsTextView.setText(response.get(2).title);
                             }
-                        }, new Response.ErrorListener() {
+                        },
+                        new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.e(TAG, error.getMessage());
                             }
-                        });
-                queue.add(request);
+                        }
+                );
+
+                queue.add(req);
             }
         });
 
