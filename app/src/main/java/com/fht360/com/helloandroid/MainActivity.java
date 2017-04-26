@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                         PostModel[].class,
                         new Response.Listener<PostModel[]>() {
                             @Override
-                            public void onResponse(PostModel[] response) {
-                                mPostsTextView.setText(response[1].title);
+                            public void onResponse(PostModel[] posts) {
+                                mPostsTextView.setText(posts[counter].title);
                             }
                         },
                         new Response.ErrorListener() {
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                 );
+
 
                 queue.add(req);
             }
