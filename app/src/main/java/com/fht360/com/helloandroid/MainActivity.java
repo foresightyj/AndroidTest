@@ -68,13 +68,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "Get Posts Button is clicked");
 
-                RestfulRequest<PostModel> req = new RestfulRequest<>(
-                        root + "/posts/1",
-                        PostModel.class,
-                        new Response.Listener<PostModel>() {
+                RestfulRequest<PostModel[]> req = new RestfulRequest<>(
+                        root + "/posts/",
+                        PostModel[].class,
+                        new Response.Listener<PostModel[]>() {
                             @Override
-                            public void onResponse(PostModel response) {
-                                mPostsTextView.setText(response.title);
+                            public void onResponse(PostModel[] response) {
+                                mPostsTextView.setText(response[1].title);
                             }
                         },
                         new Response.ErrorListener() {
