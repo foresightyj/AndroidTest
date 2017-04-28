@@ -1,5 +1,4 @@
 package com.fht360.com.helloandroid;
-
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -46,6 +46,10 @@ public class PostsFragment extends Fragment{
         mPostRecyclerView.setAdapter(mPostAdapter);
     }
 
+    public void updatePosts(PostModel[] posts)
+    {
+        mPostAdapter.updatePosts(posts);
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -125,10 +129,13 @@ public class PostsFragment extends Fragment{
     }
 
     private class PostHolder extends RecyclerView.ViewHolder {
-        public TextView mTitleTextView;
+        private TextView mTitleTextView;
+        private TextView mContentTextView;
+
         public PostHolder(View itemView) {
             super(itemView);
-            mTitleTextView = (TextView) itemView;
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_post_title);
+            mContentTextView = (TextView) itemView.findViewById(R.id.list_item_post_content);
         }
     }
 
@@ -137,22 +144,20 @@ public class PostsFragment extends Fragment{
         private List<PostModel> mPosts;
         public PostAdapter() {
             List<PostModel> posts = new ArrayList<>();
-            for(int i=0; i < 50; i++)
-            {
-                PostModel p = new PostModel();
-                p.id = i;
-                p.title = "Post"+ i;
-                p.userId = i;
-                posts.add(p);
-            }
             this.mPosts = posts;
+        }
+
+        public void updatePosts(PostModel[] posts)
+        {
+            this.mPosts = Arrays.asList(posts);
+            this.notifyDataSetChanged();
         }
 
         @Override
         public PostHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Log.i(TAG, "onCreateViewHolder");
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_post, parent, false);
             return new PostHolder(view);
         }
 
@@ -161,6 +166,7 @@ public class PostsFragment extends Fragment{
             Log.i(TAG, "onBindViewHolder, position = " + position);
             PostModel post = mPosts.get(position);
             holder.mTitleTextView.setText(post.title);
+            holder.mContentTextView.setText(post.content);
         }
 
         @Override

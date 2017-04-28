@@ -1,13 +1,10 @@
 package com.fht360.com.helloandroid;
 
 import android.content.Context;
-import android.content.pm.LauncherApps;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 /**
  * Created by Administrator on 2017/4/27.
@@ -15,21 +12,24 @@ import com.android.volley.toolbox.Volley;
 
 
 public class PostService {
-    private RequestQueue requestQueue;
     private final String APIROOT = "http://jsonplaceholder.typicode.com";
     private static String TAG = "PostService";
-
+    private Context mContext;
+    private static PostService sInstance;
     private PostService(Context context)
     {
-        requestQueue = Volley.newRequestQueue(context);
+        mContext = context;
     }
 
-    public static PostService get(Context context)
+    public static PostService getInstance(Context context)
     {
-        return new PostService(context);
+        if(sInstance == null){
+            sInstance = new PostService(context);
+        }
+        return sInstance;
     }
 
-    public void GetPosts(final Callback<PostModel[]> cb)
+    public void GetPosts(final VolleyCallback<PostModel[]> cb)
     {
         RestfulRequest<PostModel[]> req = new RestfulRequest<>(
                 APIROOT + "/posts/",
@@ -37,7 +37,7 @@ public class PostService {
                 new Response.Listener<PostModel[]>() {
                     @Override
                     public void onResponse(PostModel[] posts) {
-                        cb.onData(posts);
+                        cb.onSuccess(posts);
                     }
                 },
                 new Response.ErrorListener() {
@@ -47,6 +47,6 @@ public class PostService {
                     }
                 }
         );
-        requestQueue.add(req);
+        VolleyRequest.getInstance(mContext).addToRequestQueue(req);
     }
 }

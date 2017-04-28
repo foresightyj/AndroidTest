@@ -14,21 +14,14 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-
 public class MainActivity extends FragmentActivity implements PostsFragment.OnFragmentInteractionListener{
     private Button mGetPostsButton;
     private TextView mStatusTextView;
     private final String TAG = "Main";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "MainActivity onCreate");
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
@@ -43,13 +36,18 @@ public class MainActivity extends FragmentActivity implements PostsFragment.OnFr
         mGetPostsButton = (Button) findViewById(R.id.get_posts_button);
         mStatusTextView = (TextView) findViewById(R.id.status_text_view);
 
-        Log.i(TAG, "MainActivity Created");
-
+        final PostsFragment postsFragment = (PostsFragment)fragment;
         mGetPostsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Get Posts Button is clicked");
-
+                PostService.getInstance(getApplicationContext()).GetPosts(new VolleyCallback<PostModel[]>() {
+                    @Override
+                    public void onSuccess(PostModel[] posts) {
+                        Log.i(TAG, "Got " + posts.length  + " Posts");
+                        postsFragment.updatePosts(posts);
+                    }
+                });
             }
         });
 
@@ -62,6 +60,8 @@ public class MainActivity extends FragmentActivity implements PostsFragment.OnFr
                         .setAction("Action", null).show();
             }
         });
+
+        Log.i(TAG, "MainActivity Created");
     }
 
     @Override
